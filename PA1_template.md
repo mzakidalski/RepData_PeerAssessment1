@@ -131,5 +131,66 @@ average the biggest number of steps done throughout the day.
 ## Imputing missing values
 
 
+```r
+number_rows_with_na <- sum(is.na(original_data$steps) | is.na(original_data$date) | is.na(original_data$interval))
+```
+
+There are 2304 rows with missing data in the original dataset.
+The propose imputing strategy is to use the mean number of steps form the specified interval from all days. 
+
+The imputed data is stored in the original_imputed_data. 
+
+```r
+original_imputed_data <- original_data %>%
+                         mutate(interval = as.integer(as.character(interval))) %>%
+                         mutate(steps = as.double(steps))
+original_imputed_data <- left_join(original_imputed_data, mean_day_activities, by="interval")
+
+original_imputed_data <- original_imputed_data %>% 
+                         mutate(steps = ifelse(is.na(steps), average_activity, 
+                                               steps)) %>%
+                         select(-average_activity)
+```
+
+The new histogram of the total steps per day is as it follows:
+
+
+```r
+total_imputed_steps_per_day <- original_imputed_data %>% select(steps, date) %>% 
+                      group_by(date) %>%
+                      summarise(sum_steps_per_day = sum(steps, na.rm = TRUE)) 
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
+ggplot(data = total_imputed_steps_per_day, aes(x = sum_steps_per_day)) + 
+      geom_histogram(bins = 30)
+```
+
+![](PA1_template_files/figure-html/sum-steps-histogram-imputed-1.png)<!-- -->
+
+Computing the mean / median of total steps per day: 
+
+
+```r
+mean_median_total_steps_imputed <- total_imputed_steps_per_day %>%
+  summarize(mean = mean(sum_steps_per_day), median = median(sum_steps_per_day))
+mean_median_total_steps_imputed
+```
+
+```
+## # A tibble: 1 x 2
+##     mean median
+##    <dbl>  <dbl>
+## 1 10766. 10766.
+```
+
+
+The mean of the total number of steps per day is 10766.19
+and the median -  10766.19 (all values are rounded). After data imputing
+those values are naturally higher. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
