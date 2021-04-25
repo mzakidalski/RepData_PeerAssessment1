@@ -14,6 +14,7 @@ Loading libraries:
 ```r
 library(readr)
 library(ggplot2)
+library(dplyr)
 ```
 
 The following settings are local-environment dependent so they have to be 
@@ -41,8 +42,8 @@ original_data <- read_delim("activity.csv",
                             col_types = cols(
                               steps = col_integer(),
                               date = col_date(format= "%Y-%m-%d"),
-                              interval = col_factor()) 
-                           )
+                              interval = col_factor()))
+
 summary(original_data)
 ```
 
@@ -60,7 +61,46 @@ summary(original_data)
 
 ## What is mean total number of steps taken per day?
 
+The histogram for the "total number of steps per day" distribution
 
+
+```r
+total_steps_per_day <- original_data %>% select(steps, date) %>% 
+                      group_by(date) %>%
+                      summarise(sum_steps_per_day = sum(steps, na.rm = TRUE)) 
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
+ggplot(data = total_steps_per_day, aes(x = sum_steps_per_day)) + 
+      geom_histogram(bins = 30)
+```
+
+![](PA1_template_files/figure-html/sum-steps-histogram-1.png)<!-- -->
+
+
+
+Calculating the mean and the median of the total number of steps taken per day:
+
+
+```r
+mean_median_total_steps <- total_steps_per_day %>%
+  summarize(mean = mean(sum_steps_per_day), median = median(sum_steps_per_day))
+mean_median_total_steps
+```
+
+```
+## # A tibble: 1 x 2
+##    mean median
+##   <dbl>  <int>
+## 1 9354.  10395
+```
+
+The mean of the total number of steps per day is 9354.2295082
+and the median -  10395.
 
 ## What is the average daily activity pattern?
 

@@ -8,11 +8,73 @@ output:
 
 ## Loading and preprocessing the data
 
+Loading libraries:
+
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(readr)
+library(ggplot2)
+library(dplyr)
+```
+
+The following settings are local-environment dependent so they have to be 
+adjusted according to the local computer settings.
+
+```{r, echo=TRUE}
+
+# Folder with the cloned repository
+project_folder = "D:/projects/RepData_PeerAssessment1"
+
+```
+
+Code responsible for unzipping the archive and reading the data:
+
+```{r, echo=TRUE}
+
+original_folder = getwd()
+setwd(project_folder)
+
+unzip("activity.zip", overwrite = TRUE, exdir = ".")
+
+original_data <- read_delim("activity.csv", 
+                           skip = 1,
+                           delim = ",",
+                           col_names = c("steps", "date", "interval"),
+                            col_types = cols(
+                              steps = col_integer(),
+                              date = col_date(format= "%Y-%m-%d"),
+                              interval = col_factor()))
+
+summary(original_data)
+```
 
 
 ## What is mean total number of steps taken per day?
 
+The histogram for the "total number of steps per day" distribution
 
+```{r sum-steps-histogram, echo = TRUE}
+
+total_steps_per_day <- original_data %>% select(steps, date) %>% 
+                      group_by(date) %>%
+                      summarise(sum_steps_per_day = sum(steps, na.rm = TRUE)) 
+                      
+ggplot(data = total_steps_per_day, aes(x = sum_steps_per_day)) + 
+      geom_histogram(bins = 30)
+
+```
+
+
+
+Calculating the mean and the median of the total number of steps taken per day:
+
+```{r, echo=TRUE}
+mean_median_total_steps <- total_steps_per_day %>%
+  summarize(mean = mean(sum_steps_per_day), median = median(sum_steps_per_day))
+mean_median_total_steps
+```
+
+The mean of the total number of steps per day is `r mean_median_total_steps$mean`
+and the median -  `r mean_median_total_steps$median`.
 
 ## What is the average daily activity pattern?
 
