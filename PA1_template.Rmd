@@ -91,6 +91,11 @@ geom_line()
  
 ```
 
+Finding the 5-minute interval with (on the average per all days) bigger number of steps.
+
+```{r}
+mean_day_activities[which(mean_day_activities$average_activity == max(mean_day_activities$average_activity) ), ]$interval
+```
 
 The interval `r mean_day_activities[which(mean_day_activities$average_activity == max(mean_day_activities$average_activity) ), ]$interval`  contains on the 
 average the biggest number of steps done throughout the day.
@@ -156,7 +161,7 @@ original_imputed_data <- original_imputed_data %>%
 
  original_imputed_data$type_of_day <-  as.factor(original_imputed_data$type_of_day) 
  
- total_imputed_steps_per_interval_per_day_type <- original_imputed_data %>%                                                          select(steps, interval, type_of_day) %>% 
+ total_imputed_steps_per_interval_per_day_type <- original_imputed_data %>%                                                           select(steps, interval, type_of_day) %>% 
                                              group_by(interval, type_of_day) %>%
                                              summarise(sum_steps_per_interval = sum(steps))
  

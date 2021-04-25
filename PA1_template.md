@@ -124,6 +124,16 @@ geom_line()
 
 ![](PA1_template_files/figure-html/average_daily_activities-1.png)<!-- -->
 
+Finding the 5-minute interval with (on the average per all days) bigger number of steps.
+
+
+```r
+mean_day_activities[which(mean_day_activities$average_activity == max(mean_day_activities$average_activity) ), ]$interval
+```
+
+```
+## [1] 835
+```
 
 The interval 835  contains on the 
 average the biggest number of steps done throughout the day.
@@ -205,7 +215,7 @@ original_imputed_data <- original_imputed_data %>%
 
  original_imputed_data$type_of_day <-  as.factor(original_imputed_data$type_of_day) 
  
- total_imputed_steps_per_interval_per_day_type <- original_imputed_data %>%                                                          select(steps, interval, type_of_day) %>% 
+ total_imputed_steps_per_interval_per_day_type <- original_imputed_data %>%                                                           select(steps, interval, type_of_day) %>% 
                                              group_by(interval, type_of_day) %>%
                                              summarise(sum_steps_per_interval = sum(steps))
 ```
@@ -219,6 +229,6 @@ original_imputed_data <- original_imputed_data %>%
    geom_line() + facet_grid(row = vars(type_of_day))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
 It is visible that the objects under scrutiny made definitely less steps on weekends than during normal days.
