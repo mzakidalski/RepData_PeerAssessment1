@@ -15,6 +15,7 @@ Loading libraries:
 library(readr)
 library(ggplot2)
 library(dplyr)
+library(lubridate)
 ```
 
 The following settings are local-environment dependent so they have to be 
@@ -194,3 +195,30 @@ and the median -  10766.19 (all values are rounded). After data imputing
 those values are naturally higher. 
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+We add a type_of_day variable for differentiate weekdays from the weekends.
+
+
+```r
+original_imputed_data <- original_imputed_data %>% 
+                         mutate(type_of_day = ifelse(lubridate::wday(date) %in% c(1,7), "WEEKEND", "NORMAL_DAY"))
+
+ original_imputed_data$type_of_day <-  as.factor(original_imputed_data$type_of_day) 
+ 
+ total_imputed_steps_per_interval_per_day_type <- original_imputed_data %>%                                                          select(steps, interval, type_of_day) %>% 
+                                             group_by(interval, type_of_day) %>%
+                                             summarise(sum_steps_per_interval = sum(steps))
+```
+
+```
+## `summarise()` regrouping output by 'interval' (override with `.groups` argument)
+```
+
+```r
+ ggplot(total_imputed_steps_per_interval_per_day_type, aes(x=interval, y=sum_steps_per_interval)) + 
+   geom_line() + facet_grid(row = vars(type_of_day))
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+It is visible that the objects under scrutiny made definitely less steps on weekends than during normal days.
