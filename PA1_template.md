@@ -105,6 +105,28 @@ and the median -  10395.
 ## What is the average daily activity pattern?
 
 
+```r
+mean_day_activities <- original_data %>% group_by(interval) %>%
+                       summarize(average_activity = mean(steps, na.rm = TRUE)) %>%
+                       mutate(interval = as.numeric(as.character(interval))) %>%
+                       arrange(interval)
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
+ggplot(mean_day_activities, aes(x=interval, y=average_activity)) +
+geom_line()
+```
+
+![](PA1_template_files/figure-html/average_daily_activities-1.png)<!-- -->
+
+
+The interval 835  contains on the 
+average the biggest number of steps done throughout the day.
+
 
 ## Imputing missing values
 
